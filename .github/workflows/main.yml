@@ -1,4 +1,4 @@
-name: morning
+name: build
 on:
   schedule:
   - cron:  '0 23 * * *'
