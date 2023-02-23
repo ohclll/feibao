@@ -45,7 +45,7 @@ def get_weather():
     return None
   weather = res['data']['list'][0]
   weather['weather']=weather['tq2']
-  weather['temp']=weather['qw1']
+  weather['temp']=int(weather['qw1'])
   return weather
 
 # 获取当前日期为星期几
