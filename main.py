@@ -38,11 +38,14 @@ def get_weather():
   if city is None:
     print('请设置城市')
     return None
-  url = "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city=" + city
+  # url = "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city=" + city
+  url = "http://api.yytianqi.com/forecast7d?city=CH210301&key=37orlew2ecl9chbg"
   res = requests.get(url).json()
   if res is None:
     return None
   weather = res['data']['list'][0]
+  weather['weather']=weather['tq2']
+  weather['temp']=weather['qw1']
   return weather
 
 # 获取当前日期为星期几
@@ -111,7 +114,10 @@ def split_birthday():
 weather = get_weather()
 if weather is None:
   print('获取天气失败')
-  exit(422)
+  # exit(422)
+  weather={}
+  weather['weather']="宝贝看天气预报"
+  weather['temp']="宝贝看天气预报"
 data = {
   "city": {
     "value": city,
@@ -133,34 +139,34 @@ data = {
     "value": weather['weather'],
     "color": get_random_color()
   },
-  "humidity": {
-    "value": weather['humidity'],
-    "color": get_random_color()
-  },
-  "wind": {
-    "value": weather['wind'],
-    "color": get_random_color()
-  },
-  "air_data": {
-    "value": weather['airData'],
-    "color": get_random_color()
-  },
-  "air_quality": {
-    "value": weather['airQuality'],
-    "color": get_random_color()
-  },
+  # "humidity": {
+  #   "value": weather['humidity'],
+  #   "color": get_random_color()
+  # },
+  # "wind": {
+  #   "value": weather['wind'],
+  #   "color": get_random_color()
+  # },
+  # "air_data": {
+  #   "value": weather['airData'],
+  #   "color": get_random_color()
+  # },
+  # "air_quality": {
+  #   "value": weather['airQuality'],
+  #   "color": get_random_color()
+  # },
   "temperature": {
     "value": math.floor(weather['temp']),
     "color": get_random_color()
   },
-  "highest": {
-    "value": math.floor(weather['high']),
-    "color": get_random_color()
-  },
-  "lowest": {
-    "value": math.floor(weather['low']),
-    "color": get_random_color()
-  },
+  # "highest": {
+  #   "value": math.floor(weather['high']),
+  #   "color": get_random_color()
+  # },
+  # "lowest": {
+  #   "value": math.floor(weather['low']),
+  #   "color": get_random_color()
+  # },
   "love_days": {
     "value": get_memorial_days_count(),
     "color": get_random_color()
@@ -180,25 +186,24 @@ for index, aim_date in enumerate(split_birthday()):
     "color": get_random_color()
   }
 data['birthday_wish'] = {
-    "value": "祝宝贝生日快乐！" if get_counter_left(split_birthday()[0])[1] else "多喝水多运动，又是元气满满的一天 : )",
+    "value": "祝宝贝生日快乐！" if get_counter_left(split_birthday()[0])[1] else "么么哒😘宝贝起床吃奶啦😍",
     "color": get_random_color()
 }
 if __name__ == '__main__':
   try:
     client = WeChatClient(app_id, app_secret)
   except WeChatClientException as e:
-    print('微信获取 token 失败，请检查 APP_ID 和 APP_SECRET，或当日调用量是否已达到微信限制。')
+    # print('微信获取 token 失败，请检查 APP_ID 和 APP_SECRET，或当日调用量是否已达到微信限制。')
     exit(502)
 
   wm = WeChatMessage(client)
   count = 0
   try:
     for user_id in user_ids:
-      print('正在发送给 %s, 数据如下：%s' % (user_id, data))
+      # print('正在发送给 %s, 数据如下：%s' % (user_id, data))
       res = wm.send_template(user_id, template_id, data)
       count+=1
   except WeChatClientException as e:
     print('微信端返回错误：%s。错误代码：%d' % (e.errmsg, e.errcode))
     exit(502)
 
-  print("发送了" + str(count) + "条消息")
